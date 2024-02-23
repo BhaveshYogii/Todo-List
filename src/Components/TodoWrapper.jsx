@@ -5,16 +5,34 @@ import Todo from './Todo';
 import EditTodoForm from './EditTodoForm';
 uuidv4();
 
+const getItem = ()=>{
+  const list = JSON.parse(localStorage.getItem('list'));
+  if(list){
+    return list;
+  }
+  return [];
+}
+
 const TodoWrapper = () => {
-  const [todos,setTodos] = useState([])
+  const [todos,setTodos] = useState(getItem())
   const addToDo = (todo)=>{
     // console.log(todo);
     setTodos([...todos, {id: uuidv4(),task:todo,completed:false,isEditing:false}])
+    
 
     // console.log(todos);
   }
+
+  // useEffect(() => {
+  //   const storedTodos = JSON.parse(localStorage.getItem('list'));
+  //   if (storedTodos) {
+  //     setTodos(storedTodos);
+  //   }
+  // }, []);
+
   useEffect(() => {
-    console.log(todos);
+   localStorage.setItem('list',JSON.stringify(todos));
+   
   }, [todos]);
 
   const toggleCompleted = (id)=>{
@@ -37,7 +55,7 @@ const TodoWrapper = () => {
       {
         todos.map((data,index)=>(        
           data.isEditing ? (
-            <EditTodoForm editTodo={editTask} data={data}/>
+            <EditTodoForm editTodo={editTask} data={data} key={index}/>
           ) : (
             <Todo data={data} key={index} toggleCompleted={toggleCompleted} deleteTodo={deleteTodo} editTodo={editTodo}/>
           )
